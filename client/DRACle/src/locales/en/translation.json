@@ -1,0 +1,9 @@
+{
+    "login": "Login",
+    "hello": "Hello",
+    "welcome_back": "Welcome Back",
+    "username": "Username",
+    "email": "E-mail",
+    "password": "Password",
+    "dont_have_account" : "Don't you have an account?"
+}
