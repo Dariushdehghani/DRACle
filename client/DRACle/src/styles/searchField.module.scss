@@ -1,0 +1,21 @@
+.inputBox {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    background-color: var(--light-accent);
+    width: fit-content;
+    height: fit-content;
+    border-radius: 24px;
+    padding: 5px;
+    background-color: rgb(208, 203, 216);
+    border: 1px solid var(--border-color);
+    
+    & input {
+        background: none;
+        border: none;
+        outline: none;
+    }
+    & input:focus {
+        background-color: aliceblue;
+    }
+}

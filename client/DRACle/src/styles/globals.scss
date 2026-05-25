@@ -2,3 +2,12 @@
     color: var(--text-primary);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+
+row {
+    display: flex;
+    flex-direction: row;
+}
+
+html {
+    overflow: hidden;
+}

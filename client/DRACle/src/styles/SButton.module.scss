@@ -5,10 +5,10 @@
     align-items: center;
     border-radius: 10px;
     border: none;
-    background-color: var(--accent);
+    background: var(--gradient-accent);
     transition: 0.2s;
-}
-
-.button:hover {
-    scale: 0.95;
+    
+    &:hover {
+        scale: 0.95;
+    }
 }

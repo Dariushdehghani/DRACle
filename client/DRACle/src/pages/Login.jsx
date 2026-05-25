@@ -4,14 +4,21 @@ import { useTranslation } from "react-i18next"
 import Input1 from "../components/Input1";
 import { ArrowRight, Lock, User } from "lucide-react";
 import SButton from "../components/SButton";
-import { useState } from "react";
 import LangSelect from "../components/LanguageSwitcher";
+import { useState } from "react";
 
 export default function Login(){
     const { t } = useTranslation()
-    const l = window.location.pathname
-    const [username, setUsername] = useState('')
-    const [password, setPassword] = useState('')
+    const [inputValues, setInputValues] = useState({});
+
+    const handleInputChange = (e) => {
+      const { name, value } = e.target;
+      setInputValues((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    };
+
 
     return (
       <>
@@ -22,8 +29,21 @@ export default function Login(){
           <div className={styles.login_box}>
             <form className={styles.login_box_container}>
               <h1>{t("welcome_back")}</h1>
-              <Input1 icon={User} placeholder={t("username")} />
-              <Input1 icon={Lock} placeholder={t("password")} type="password" />
+              <Input1
+                name="username"
+                onChange={handleInputChange}
+                value={inputValues.username}
+                icon={User}
+                placeholder={t("username")}
+              />
+              <Input1
+                name="pass"
+                onChange={handleInputChange}
+                value={inputValues.pass}
+                icon={Lock}
+                placeholder={t("password")}
+                type="password"
+              />
               <SButton icon={ArrowRight} type="submit" />
               <LangSelect />
               <a href="/signup">{t("dont_have_account")}</a>

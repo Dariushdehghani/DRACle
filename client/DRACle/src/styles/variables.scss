@@ -1,8 +1,12 @@
 :root {
-    --bg-primary: #ebebeb;
+    --bg-primary: #ededed;
+    --bg-secondary: #e3e3e3;
     
-    --accent: #47cc50;
+    --accent: #8412ff;
+    --gradient-accent: linear-gradient(125deg, var(--accent) 60%, #6703d1);
+    --gradient-accent-secondary: linear-gradient( 180deg, var(--accent) 30%, #6703d1);
 
     --text-primary: #111;
     --border-radius: 24px;
+    --border-color: rgb(215, 215, 215);
 }

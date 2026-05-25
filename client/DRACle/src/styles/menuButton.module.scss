@@ -1,0 +1,21 @@
+.button {
+    display: flex;
+    gap: 1rem;
+    padding: 8px 1rem 8px 1rem;
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    background: none;
+    border: none;
+    border-radius: 10px;
+    color: var(--text-primary);
+    transition: 0.2s;
+    &.active {
+        background: var(--gradient-accent);
+        color: #f1f1f1;
+    }
+    &:hover {
+        scale: 0.95;
+        opacity: 0.9;
+    }
+}

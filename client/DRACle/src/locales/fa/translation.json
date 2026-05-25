@@ -5,5 +5,10 @@
   "username": "نام کاربری",
   "email": "پست الکترونیک",
   "password": "گذرواژه",
-  "dont_have_account": "حسابی ندارید؟"
+  "dont_have_account": "حسابی ندارید؟",
+  "home": "خانه",
+  "my_classes": "کلاس های من",
+  "assignment": "بارگذاری",
+  "performance": "عملکرد",
+  "settings": "تنظیمات"
 }
