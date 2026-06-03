@@ -8,10 +8,12 @@ import AccentButton from "../components/AccentButton";
 import ProgressBar from "../components/ProgressBar";
 import Achievments from "../components/Achievments";
 
-export default function Dashboard(){
+export default function Dashboard({
+  user
+}){
     return (
       <div className={styles.row}>
-        <Menu active="home" />
+        <Menu active="home" user={user} />
         <div className={styles.main}>
           <div className={styles.header}>
             <SearchField />

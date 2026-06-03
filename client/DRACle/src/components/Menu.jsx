@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function Menu({
     active: Active,
+    user,
     ...props
 }) {
   const navigate = useNavigate();
@@ -60,7 +61,7 @@ export default function Menu({
         </div>
       </div>
       <div className={styles.bottom}>
-        <MenuButton text={t("username")} />
+        <MenuButton text={user.username} />
       </div>
     </div>
   );
