@@ -1,21 +1,19 @@
 import bcrypt from "bcrypt";
-import prisma from "../config/prisma.js";
+import { db } from "../drizzle.js"; 
 import { id } from "zod/v4/locales";
+import { users } from "../db/schema.ts"
+import { eq, or, count } from "drizzle-orm";
+import { verify } from "node:crypto";
+import { createId } from "@paralleldrive/cuid2"
+import app from "../app.js";
 
-export const register = async () => {
+export const register = async (req, reply) => {
     try {
         const { username, email, password } = req.body;
 
-        const existingUser = await prisma.user.findUnique({
-            where: {
-                OR: {
-                    username: username,
-                    email: email
-                }
-            }
-        });
+        const existingUser = await db.select({ count: count() }).from(users).where(or(eq(users.username, username), eq(users.email, email)))
 
-        if (existingUser) {
+        if (existingUser[0]["count"] > 0) {
             return reply
             .status(400)
             .send({
@@ -25,13 +23,9 @@ export const register = async () => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const user = await prisma.user.create({
-            data: {
-                username: username,
-                email: email,
-                password: hashedPassword
-            }
-        });
+        const id = createId()
+        
+        const user = await db.insert(users).values({id: id, username, email, password: hashedPassword})
 
         const token = app.jwt.sign({
             id: user.id
@@ -46,7 +40,12 @@ export const register = async () => {
         })
 
         return reply.send({
-            message: "Registered successfully"
+            message: "Registered successfully",
+            user: {
+                id,
+                username,
+                email
+            }
         });
     } catch (err) {
         console.log(err)
@@ -59,18 +58,18 @@ export const register = async () => {
     }
 }
 
-export const login = async (req, res) => {
+export const login = async (req, reply) => {
     try {
         const {
             email,
             password
         } = req.body
 
-        const user = await prisma.user.findUnique({
-            where: { email }
-        })
+        const Tuser = (await db.select().from(users).where(or(eq(users.email, email), eq(users.username, email))))[0]
 
-        if (!user) {
+        console.log("the user to bcrypt:" + JSON.stringify(Tuser))
+
+        if (!Tuser) {
             return reply
             .status(404)
             .send({
@@ -80,7 +79,7 @@ export const login = async (req, res) => {
 
         const validPass = await bcrypt.compare(
             password,
-            user.password
+            Tuser.password
         )
 
         if (!validPass) {
@@ -92,8 +91,7 @@ export const login = async (req, res) => {
         }
 
         const token = await reply.jwtSign({
-            id: user.id,
-            email: user.email
+            id: Tuser.id
         })
 
         reply.setCookie(
@@ -109,9 +107,9 @@ export const login = async (req, res) => {
         return reply.send({
             message: "Login successful",
             user: {
-                id: user.id,
-                username: user.username,
-                email: user.email
+                id: Tuser.id,
+                username: Tuser.username,
+                email: Tuser.email
             }
         })
     } catch (err) {
@@ -121,5 +119,15 @@ export const login = async (req, res) => {
         .send({
             message: "Server error"
         })
+    }
+}
+
+export async function me(request, reply) {
+    const Tuser = (await db.select().from(users).where(eq(request.user.id, users.id)))[0]
+
+    return {
+        id: Tuser.id,
+        username: Tuser.username,
+        email: Tuser.email
     }
 }

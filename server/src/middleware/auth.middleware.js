@@ -1,11 +1,11 @@
-export const verifyAuth = async (req, res) => {
+export async function verifyAuth(request, reply) {
+
     try {
-        req.jwtVerify()
-    } catch {
-        return reply
-        .status(401)
-        .send({
-            message: "Unauthorized"
+        await request.jwtVerify()
+    } catch (err) {
+        return reply.code(401).send({
+            message: "Unauthorized:" + err
         })
     }
+
 }
