@@ -6,19 +6,28 @@ import { ArrowRight, Lock, User } from "lucide-react";
 import SButton from "../components/SButton";
 import LangSelect from "../components/LanguageSwitcher";
 import { useState } from "react";
+import api from "../lib/api";
 
 export default function Login(){
     const { t } = useTranslation()
-    const [inputValues, setInputValues] = useState({});
 
-    const handleInputChange = (e) => {
-      const { name, value } = e.target;
-      setInputValues((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    };
+    async function handleSubmit(e) {
+      e.preventDefault()
 
+      try {
+        const res = await api.post(
+          "/api/login",
+          {
+            email,
+            password
+          }
+        )
+
+        console.log(res.data)
+      } catch (err) {
+        console.log(err)
+      }
+    }
 
     return (
       <>
@@ -27,19 +36,15 @@ export default function Login(){
             <img src={bg} alt="" className={styles.bg_img} />
           </div>
           <div className={styles.login_box}>
-            <form className={styles.login_box_container}>
+            <form className={styles.login_box_container} onSubmit={handleSubmit()}>
               <h1>{t("welcome_back")}</h1>
               <Input1
                 name="username"
-                onChange={handleInputChange}
-                value={inputValues.username}
                 icon={User}
                 placeholder={t("username")}
               />
               <Input1
-                name="pass"
-                onChange={handleInputChange}
-                value={inputValues.pass}
+                name="password"
                 icon={Lock}
                 placeholder={t("password")}
                 type="password"
