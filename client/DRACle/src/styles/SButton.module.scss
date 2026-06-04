@@ -6,9 +6,5 @@
     border-radius: 10px;
     border: none;
     background: var(--gradient-accent);
-    transition: 0.2s;
-    
-    &:hover {
-        scale: 0.95;
-    }
+    width: 100%;
 }

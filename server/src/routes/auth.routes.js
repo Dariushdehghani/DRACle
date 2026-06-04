@@ -1,4 +1,4 @@
-import { register, login, me } from "../controllers/auth.controller.js";
+import { register, login, me, checkAccount } from "../controllers/auth.controller.js";
 import { verifyAuth } from "../middleware/auth.middleware.js";
 
 export default async function authRoutes(app) {
@@ -10,5 +10,6 @@ export default async function authRoutes(app) {
         { preHandler: verifyAuth },
         me
     )
+    app.post("/check-account", checkAccount)
 
 }

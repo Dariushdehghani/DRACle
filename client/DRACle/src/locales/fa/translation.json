@@ -6,10 +6,19 @@
   "email": "پست الکترونیک",
   "password": "گذرواژه",
   "dont_have_account": "حسابی ندارید؟",
-  "have_account": "یک حسابی دارید؟",
+  "have_account": "یک حساب دارید؟",
   "home": "خانه",
   "my_classes": "کلاس های من",
   "assignment": "بارگذاری",
   "performance": "عملکرد",
-  "settings": "تنظیمات"
+  "settings": "تنظیمات",
+  "signup": "ثبت نام",
+  "academy": "آکادمی",
+  "new academy": "آکادمی جدید",
+  "join academy": "عضو یک آکادمی شوید",
+  "back": "برو عقب",
+  "select_role": "انتخاب نقش",
+  "student": "دانشجو",
+  "teacher": "معلم",
+  "assistant": "دستیار"
 }

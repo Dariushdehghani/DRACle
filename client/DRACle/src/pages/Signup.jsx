@@ -1,70 +1,342 @@
-import styles from "../styles/Login.module.scss"
-import bg from "../assets/login-bg.jpg"
-import { useTranslation } from "react-i18next"
+import styles from "../styles/Login.module.scss";
+import bg from "../assets/login-bg.jpg";
+import { useTranslation } from "react-i18next";
 import Input1 from "../components/Input1";
-import { ArrowRight, Lock, Mail, User } from "lucide-react";
+import {
+  ArrowRight,
+  GraduationCap,
+  Lock,
+  Mail,
+  NotebookText,
+  School,
+  User,
+  Users,
+} from "lucide-react";
 import SButton from "../components/SButton";
 import LangSelect from "../components/LanguageSwitcher";
 import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import api from "../lib/api";
-import { useNavigate } from "react-router-dom";
 
-export default function Signup(){
-    const { t } = useTranslation()
-    let navigate = useNavigate()
+export default function Signup() {
+  const [formData, setFormData] = useState({
+    academyAction: "",
+    role: "",
+    username: "",
+    email: '',
+    password: ''
+  });
 
-    async function handleSubmit(event) {
-      event.preventDefault()
-      console.log(event)
+  const [[step, direction], setStep] = useState([1, 0]);
 
-      try {
-        const res = await api.post(
-          "/auth/register",
-          {
-            username: event.target[0].value,
-            email: event.target[1].value,
-            password: event.target[2].value
-          }
-        )
-        navigate("/dash")
-        console.log(res.data)
-      } catch (err) {
-        console.log(err)
+  function nextStep() {
+    setStep(([current]) => [current + 1, 1]);
+  }
+
+  function prevStep() {
+    setStep(([current]) => [current - 1, -1]);
+  }
+
+  const steps = [
+    <SignupForm
+      key="form"
+      data={formData}
+      setData={setFormData}
+      onNext={nextStep}
+    />,
+    <AcademySelection
+      key="academy"
+      data={formData}
+      setData={setFormData}
+      onNext={nextStep}
+      setStep={setStep}
+      onBack={prevStep}
+    />,
+    <RoleSelection
+      key="role"
+      data={formData}
+      setData={setFormData}
+      onBack={prevStep}
+    />,
+    <AcademyCreation
+    key="academyCreate"
+    data={formData}
+    setData={setFormData}
+    setStep={setStep}
+    />
+  ];
+
+  return (
+    <div className={styles.row}>
+      <div className={styles.bg_img_con}>
+        <img src={bg} alt="" className={styles.bg_img} />
+      </div>
+
+      <div className={styles.login_box}>
+      <AnimatePresence mode="wait" custom={direction}>
+        <motion.div
+          key={step}
+          custom={direction}
+          variants={{
+            enter: (direction) => ({
+              x: direction > 0 ? 100 : -100,
+              opacity: 0,
+            }),
+            center: {
+              x: 0,
+              opacity: 1,
+            },
+            exit: (direction) => ({
+              x: direction > 0 ? -100 : 100,
+              opacity: 0,
+            }),
+          }}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          transition={{ duration: 0.3 }}
+        >
+          {steps[step - 1]}
+        </motion.div>
+      </AnimatePresence>
+      </div>
+    </div>
+  );
+}
+
+function SignupForm({ data, setData, onNext }) {
+  const { t } = useTranslation();
+  const [errors, setErrors] = useState({
+    username: false,
+    email: false,
+    password: false
+  })
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+
+    const username = formData.get("username");
+    const email = formData.get("email");
+    const password = formData.get("password");
+
+    try {
+      const { data } = await api.post("/auth/check-account", {
+        username,
+        email
+      });
+
+      const { availability } = data
+
+      if (availability) {
+        console.log(availability)
+        if (!availability.username) {
+          setErrors((prev) => ({
+            ...prev,
+            username: true,
+          }))
+        } 
+        if (!availability.email) {
+          setErrors((prev) => ({
+            ...prev,
+            email: true,
+          }))
+        }
+        console.log(errors)
+      } else {
+        onNext()
       }
+    } catch (err) {
+      console.log(err);
     }
+  }
 
-    return (
-      <>
-        <div className={styles.row}>
-          <div className={styles.bg_img_con}>
-            <img src={bg} alt="" className={styles.bg_img} />
-          </div>
-          <div className={styles.login_box}>
-            <form className={styles.login_box_container} onSubmit={handleSubmit}>
-              <h1>{t("welcome_back")}</h1>
-              <Input1
-                name="username"
-                icon={User}
-                placeholder={t("username")}
-              />
-              <Input1
-                name="email"
-                icon={Mail}
-                placeholder={t("email")}
-                type="email"
-              />
-              <Input1
-                name="password"
-                icon={Lock}
-                placeholder={t("password")}
-                type="password"
-              />
-              <SButton icon={ArrowRight} type="submit" />
-              <LangSelect />
-              <a href="/login">{t("have_account")}</a>
-            </form>
-          </div>
-        </div>
-      </>
-    );
+  return (
+    <form
+      className={styles.login_box_container}
+      onSubmit={handleSubmit}
+    >
+      <h1>{t("signup")}</h1>
+
+      <Input1
+        name="username"
+        icon={User}
+        error={errors.username}
+        placeholder={t("username")}
+        value={data.username}
+        onChange={(e) =>
+          setData((prev) => ({
+            ...prev,
+            username: e.target.value,
+          }))
+        }
+      />
+
+      <Input1
+        name="email"
+        icon={Mail}
+        error={errors.email}
+        type="email"
+        placeholder={t("email")}
+        value={data.email}
+        onChange={(e) =>
+          setData((prev) => ({
+            ...prev,
+            email: e.target.value,
+          }))
+        }
+      />
+
+      <Input1
+        name="password"
+        icon={Lock}
+        error={errors.password}
+        type="password"
+        placeholder={t("password")}
+        value={data.password}
+        onChange={(e) =>
+          setData((prev) => ({
+            ...prev,
+            password: e.target.value,
+          }))
+        }
+      />
+
+      <SButton
+        icon={ArrowRight}
+        type="submit"
+      />
+
+      <LangSelect />
+    </form>
+  );
+}
+
+function AcademySelection({
+  data,
+  setData,
+  onNext,
+  setStep,
+  onBack,
+}) {
+  const { t } = useTranslation();
+
+  function select(option) {
+    setData((prev) => ({
+      ...prev,
+      academyAction: option,
+    }));
+    if (option === "join") {
+      onNext();
+    } else {
+      setStep(4)
+    }
+  }
+
+  return (
+    <div className={styles.login_box_container}>
+      <h1>{t("academy")}</h1>
+
+      <button
+        type="button"
+        onClick={() => select("create")}
+      >
+        <School />
+        {t("new academy")}
+      </button>
+
+      <button
+        type="button"
+        onClick={() => select("join")}
+      >
+        <Users />
+        {t("join academy")}
+      </button>
+
+      <button
+        type="button"
+        onClick={onBack}
+      >
+        {t("back")}
+      </button>
+    </div>
+  );
+}
+
+function RoleSelection({
+  data,
+  setData,
+  onBack,
+}) {
+  const { t } = useTranslation();
+
+  function selectRole(role) {
+    setData((prev) => ({
+      ...prev,
+      role,
+    }));
+
+    console.log({
+      ...data,
+      role,
+    });
+  }
+
+  return (
+    <div className={styles.login_box_container}>
+      <h1>{t("select_role")}</h1>
+
+      <button
+        type="button"
+        onClick={() => selectRole("student")}
+      >
+        <GraduationCap />
+        {t("student")}
+      </button>
+
+      <button
+        type="button"
+        onClick={() => selectRole("teacher")}
+      >
+        <User />
+        {t("teacher")}
+      </button>
+
+      <button
+        type="button"
+        onClick={() => selectRole("assistant")}
+      >
+        <Users />
+        {t("assistant")}
+      </button>
+
+      <button
+        type="button"
+        onClick={onBack}
+      >
+        {t("back")}
+      </button>
+    </div>
+  );
+}
+
+function AcademyCreation({
+  data,
+  setData,
+  setStep,
+}) {
+  const { t } = useTranslation()
+
+  return(
+    <div className={styles.login_box_container} >
+      <h1>{t("new academy")}</h1>
+      <Input1
+      name="academy_name"
+      icon={NotebookText}
+      type="text"
+      placeholder={t("academy name")}
+      />
+    </div>
+  )
 }

@@ -1,3 +1,4 @@
+import { scale, motion } from "framer-motion";
 import styles from "../styles/SButton.module.scss"
 
 export default function SButton({
@@ -5,8 +6,8 @@ export default function SButton({
     ...props
 }) {
     return (
-      <button {...props} className={styles.button}>
+      <motion.button whileHover={{ scale: 0.95 }} whileTap={{ scale: 1.05 }} {...props} className={styles.button}>
         {Icon && <Icon size={22} className={styles.icon} />}
-      </button>
+      </motion.button>
     );
 }

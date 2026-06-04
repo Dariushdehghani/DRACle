@@ -12,5 +12,14 @@
   "my_classes": "My Classes",
   "assignment": "Assignment",
   "messages": "Messages",
-  "settings": "Settings"
+  "settings": "Settings",
+  "signup": "Sign up",
+  "academy": "Academy",
+  "new academy": "New academy",
+  "join academy": "Join an academy",
+  "back": "Back",
+  "select_role": "Select your role",
+  "student": "Student",
+  "teacher": "Teacher",
+  "assistant": "Assistant"
 }

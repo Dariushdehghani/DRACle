@@ -131,3 +131,45 @@ export async function me(request, reply) {
         email: Tuser.email
     }
 }
+
+export const checkAccount = async (req, reply) => {
+    try {
+        const { username, email } = req.body;
+        let availability = {
+            username: true,
+            email: true
+        }
+
+        const existingUsername = await db.select({ count: count() }).from(users).where(eq(users.username, username))
+
+        if (existingUsername[0]["count"] > 0) {
+            availability.username = false
+        }
+
+        const existingEmail = await db.select({ count: count() }).from(users).where(eq(users.email, email))
+
+        if (existingEmail[0]["count"] > 0) {
+            availability.email = false
+        }
+        if (!(availability.username && availability.email)) {
+            return reply
+            .status(200)
+            .send({
+                message: "User already exists",
+                availability
+            });
+        } else {
+            return reply
+            .status(200)
+            .send({
+                message: "available"
+            })
+        }
+
+    } catch (err) {
+        console.log(err)
+        return reply
+        .status(500)
+        .send({ message: "server error" })
+    }
+}
