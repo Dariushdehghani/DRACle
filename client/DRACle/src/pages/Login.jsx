@@ -8,25 +8,35 @@ import LangSelect from "../components/LanguageSwitcher";
 import { useState } from "react";
 import api from "../lib/api";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export default function Login(){
     const { t } = useTranslation()
     const [submitIcon, setSubmitIcon] = useState(ArrowRight)
     let navigate = useNavigate()
+    const { setUser } = useAuth()
 
     async function handleSubmit(event) {
       event.preventDefault()
       console.log(event)
+      setSubmitIcon(Loader)
 
       try {
+        const formData = new FormData(event.currentTarget)
+
+        const email = formData.get("username")
+        const password = formData.get("password")
+
         const res = await api.post(
           "/auth/login",
           {
-            email: event.target[0].value,
-            password: event.target[1].value
+            email,
+            password
           }
         )
-        setSubmitIcon(Loader)
+        
+        const me = await api.get("/auth/me")
+        setUser(me.data)
         navigate("/dash")
         console.log(res.data)
       } catch (err) {

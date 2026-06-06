@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import { db } from "../drizzle.js"; 
 import { id } from "zod/v4/locales";
-import { academies, academy_requests, invite_codes, users } from "../db/schema.ts"
+import { academies, academy_requests, invite_codes, membership, users } from "../db/schema.ts"
 import { eq, or, count } from "drizzle-orm";
 import { verify } from "node:crypto";
 import { createId } from "@paralleldrive/cuid2"
@@ -9,6 +9,7 @@ import app from "../app.js";
 
 export const register = async (req, reply) => {
     try {
+        console.log(req.body)
         const { username, email, password, academyAction, role, academy } = req.body;
 
         const existingUser = await db.select({ count: count() }).from(users).where(or(eq(users.username, username), eq(users.email, email)))
@@ -26,21 +27,26 @@ export const register = async (req, reply) => {
         const id = createId()
 
         if (academyAction === "create") {
-            const existingAcademy = db.select().from(academies).where(eq(academies.name, academy))
-            if (existingAcademy) {
+            const existingAcademy = await db.select({ count: count() }).from(academies).where(eq(academies.name, academy))
+            if (existingAcademy[0]["count"] > 0) {
                 return reply
-                .status(400)
+                .status(200)
                 .send({
                     message: "Academy already exists"
                 })
             }
             const aid = createId()
             await db.insert(academies).values({id: aid, name: academy, ownerId: id})
+            await db.insert(membership).values({academyId: aid, userId:id, role: "owner"})
         } else if (academyAction === "join") {
             const invite = await db.select().from(invite_codes).where(eq(invite_codes.code, academy))
             if (invite) {
                 await db.insert(academy_requests).values({academyId: academy, userId: id, requestedRole: role, status: "pending", message: ""})
             }
+        } else {
+            reply
+            .status(404)
+            .send({message: "Invalid request"})
         }
         
         const user = await db.insert(users).values({id: id, username, email, password: hashedPassword})
@@ -140,13 +146,24 @@ export const login = async (req, reply) => {
     }
 }
 
-export async function me(request, reply) {
-    const Tuser = (await db.select().from(users).where(eq(request.user.id, users.id)))[0]
+export async function me(request) {
+    try {
 
-    return {
-        id: Tuser.id,
-        username: Tuser.username,
-        email: Tuser.email
+        const user = (await db.select().from(users).where(eq(users.id, request.user.id)))[0]
+        const memberships = (await db.select().from(membership).leftJoin(academies, eq(membership.academyId, academies.id)).where(eq(membership.userId, user.id)))
+
+        if (!memberships.length) {
+            return Error("User memberships doesn't exist")
+        }
+
+        return {
+            username: user.username,
+            email: user.email,
+            memberships
+        }
+
+    } catch (err) {
+        console.log(err)
     }
 }
 

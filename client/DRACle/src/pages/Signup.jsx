@@ -372,12 +372,14 @@ function AcademyCreation({
       academy,
     }));
 
-    api.post("/auth/register", 
+    const res = api.post("/auth/register", 
       {
         ...data,
         academy,
       }
     )
+
+    console.log(res)
 
   }
 
@@ -425,12 +427,14 @@ function AcademyJoin({
       academy,
     }));
 
-    api.post("/auth/register", 
+    const res = api.post("/auth/register", 
       {
         ...data,
         academy,
       }
     )
+
+    console.log(res)
 
   }
 

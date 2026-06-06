@@ -13,6 +13,7 @@ import Assignment from "../pages/Assignment"
 import Settings from "../pages/Settings"
 import Messages from "../pages/Messages"
 import ProtectedRoute from "../routes/ProtectedRoute"
+import NotFound from "../pages/NotFound"
 
 export default function Router({
   user: User
@@ -23,11 +24,12 @@ export default function Router({
           <Route path="/" element={<Intro />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/dash" element={<ProtectedRoute isAuthenticated={!!User} ><Dashboard user={User} /></ProtectedRoute>} />
+          <Route path="/dash" element={<ProtectedRoute><Dashboard/></ProtectedRoute>} />
           <Route path="/classes" element={<Classes />} />
           <Route path="/assign" element={<Assignment />} />
           <Route path="/messages" element={<Messages />} />
           <Route path="/Settings" element={<Settings />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     );

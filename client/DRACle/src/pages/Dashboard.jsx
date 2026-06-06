@@ -7,10 +7,10 @@ import WhiteButton from "../components/WhiteButton";
 import AccentButton from "../components/AccentButton";
 import ProgressBar from "../components/ProgressBar";
 import Achievments from "../components/Achievments";
+import { useAuth } from "../context/AuthContext";
 
-export default function Dashboard({
-  user
-}){
+export default function Dashboard(){
+  const { user } = useAuth()
     return (
       <div className={styles.row}>
         <Menu active="home" user={user} />
