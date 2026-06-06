@@ -1,0 +1,18 @@
+.button {
+    background: none;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    border-radius: 10px;
+    padding: 8px;
+    transition: .3s;
+
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.141);
+    }
+    &:active {
+        background-color: rgba(0, 0, 0, 0.185);
+    }
+}

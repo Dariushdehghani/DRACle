@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import { db } from "../drizzle.js"; 
 import { id } from "zod/v4/locales";
-import { users } from "../db/schema.ts"
+import { academies, academy_requests, invite_codes, users } from "../db/schema.ts"
 import { eq, or, count } from "drizzle-orm";
 import { verify } from "node:crypto";
 import { createId } from "@paralleldrive/cuid2"
@@ -9,7 +9,7 @@ import app from "../app.js";
 
 export const register = async (req, reply) => {
     try {
-        const { username, email, password } = req.body;
+        const { username, email, password, academyAction, role, academy } = req.body;
 
         const existingUser = await db.select({ count: count() }).from(users).where(or(eq(users.username, username), eq(users.email, email)))
 
@@ -24,6 +24,24 @@ export const register = async (req, reply) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const id = createId()
+
+        if (academyAction === "create") {
+            const existingAcademy = db.select().from(academies).where(eq(academies.name, academy))
+            if (existingAcademy) {
+                return reply
+                .status(400)
+                .send({
+                    message: "Academy already exists"
+                })
+            }
+            const aid = createId()
+            await db.insert(academies).values({id: aid, name: academy, ownerId: id})
+        } else if (academyAction === "join") {
+            const invite = await db.select().from(invite_codes).where(eq(invite_codes.code, academy))
+            if (invite) {
+                await db.insert(academy_requests).values({academyId: academy, userId: id, requestedRole: role, status: "pending", message: ""})
+            }
+        }
         
         const user = await db.insert(users).values({id: id, username, email, password: hashedPassword})
 

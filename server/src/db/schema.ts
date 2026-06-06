@@ -21,6 +21,12 @@ export const academies = pgTable("academies", {
 	createdAt: timestamp().defaultNow()
 })
 
+export const invite_codes = pgTable("invite_codes", {
+	code: text().notNull(),
+	academyId: text().notNull(),
+	expireAt: timestamp()
+})
+
 export const membership = pgTable("membership", {
 	academyId: text().notNull(),
 	userId: text().notNull(),

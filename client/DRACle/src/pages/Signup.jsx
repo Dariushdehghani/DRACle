@@ -3,6 +3,7 @@ import bg from "../assets/login-bg.jpg";
 import { useTranslation } from "react-i18next";
 import Input1 from "../components/Input1";
 import {
+  ArrowLeft,
   ArrowRight,
   GraduationCap,
   Lock,
@@ -15,12 +16,15 @@ import {
 import SButton from "../components/SButton";
 import LangSelect from "../components/LanguageSwitcher";
 import { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, backIn, motion } from "framer-motion";
 import api from "../lib/api";
+import TextButton from "../components/TextButton";
+import { email, z } from "zod"
 
 export default function Signup() {
   const [formData, setFormData] = useState({
     academyAction: "",
+    academy: "",
     role: "",
     username: "",
     email: '',
@@ -57,8 +61,15 @@ export default function Signup() {
       data={formData}
       setData={setFormData}
       onBack={prevStep}
+      setStep={setStep}
     />,
     <AcademyCreation
+    key="academyCreate"
+    data={formData}
+    setData={setFormData}
+    setStep={setStep}
+    />,
+    <AcademyJoin
     key="academyCreate"
     data={formData}
     setData={setFormData}
@@ -111,15 +122,40 @@ function SignupForm({ data, setData, onNext }) {
     email: false,
     password: false
   })
+  const userSchema = z.object({
+    username: z.string().min(4).max(12),
+    email: z.string().email(),
+    password: z.string().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/, {message: "password not valid"})
+  })
 
   async function handleSubmit(event) {
     event.preventDefault();
+    setErrors({
+      username: false,
+      email: false,
+      password: false
+    })
 
     const formData = new FormData(event.currentTarget);
 
     const username = formData.get("username");
     const email = formData.get("email");
     const password = formData.get("password");
+
+    const check = userSchema.safeParse({
+      username,
+      email,
+      password
+    })
+
+    if (check.error) {
+      check.error.issues.forEach(err => setErrors((perv) => ({
+        ...perv,
+        [err.path[0]] : true
+      })))
+      console.log(check)
+      return;
+    }
 
     try {
       const { data } = await api.post("/auth/check-account", {
@@ -230,7 +266,7 @@ function AcademySelection({
     if (option === "join") {
       onNext();
     } else {
-      setStep(4)
+      setStep(() => [4, 1])
     }
   }
 
@@ -268,6 +304,7 @@ function RoleSelection({
   data,
   setData,
   onBack,
+  setStep,
 }) {
   const { t } = useTranslation();
 
@@ -276,11 +313,7 @@ function RoleSelection({
       ...prev,
       role,
     }));
-
-    console.log({
-      ...data,
-      role,
-    });
+    setStep([5,1])
   }
 
   return (
@@ -327,9 +360,29 @@ function AcademyCreation({
   setStep,
 }) {
   const { t } = useTranslation()
+  const handleSubmit = (e) => {
+    e.preventDefault()
+
+    const formData = new FormData(e.currentTarget)
+
+    const academy =  formData.get("academy_name")
+
+    setData((prev) => ({
+      ...prev,
+      academy,
+    }));
+
+    api.post("/auth/register", 
+      {
+        ...data,
+        academy,
+      }
+    )
+
+  }
 
   return(
-    <div className={styles.login_box_container} >
+    <form onSubmit={handleSubmit} className={styles.login_box_container} >
       <h1>{t("new academy")}</h1>
       <Input1
       name="academy_name"
@@ -337,6 +390,72 @@ function AcademyCreation({
       type="text"
       placeholder={t("academy name")}
       />
-    </div>
+      <SButton
+      icon={ArrowRight}
+      type="submit"
+      />
+      <TextButton
+      content={
+        <>
+        {t("back")}
+        <ArrowLeft/>
+        </>
+      }
+      onClick={() => setStep(() => [2, -1])}
+      />
+    </form>
+  )
+}
+
+function AcademyJoin({
+  data,
+  setData,
+  setStep,
+}) {
+  const { t } = useTranslation()
+  const handleSubmit = (e) => {
+    e.preventDefault()
+
+    const formData = new FormData(e.currentTarget)
+
+    const academy =  formData.get("academy_code")
+
+    setData((prev) => ({
+      ...prev,
+      academy,
+    }));
+
+    api.post("/auth/register", 
+      {
+        ...data,
+        academy,
+      }
+    )
+
+  }
+
+  return(
+    <form onSubmit={handleSubmit} className={styles.login_box_container} >
+      <h1>{t("join academy")}</h1>
+      <Input1
+      name="academy_code"
+      icon={NotebookText}
+      type="text"
+      placeholder={t("academy invite code")}
+      />
+      <SButton
+      icon={ArrowRight}
+      type="submit"
+      />
+      <TextButton
+      content={
+        <>
+        {t("back")}
+        <ArrowLeft/>
+        </>
+      }
+      onClick={() => setStep(() => [2, -1])}
+      />
+    </form>
   )
 }
