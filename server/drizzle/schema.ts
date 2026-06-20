@@ -1,7 +1,14 @@
-import { pgTable, uniqueIndex, text, timestamp } from "drizzle-orm/pg-core"
+import { pgTable, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
 
+
+export const academies = pgTable("academies", {
+	id: text().primaryKey().notNull(),
+	name: text().notNull(),
+	createdAt: timestamp({ mode: 'string' }).defaultNow(),
+	ownerId: text().notNull(),
+});
 
 export const user = pgTable("user", {
 	id: text().primaryKey().notNull(),
@@ -13,12 +20,6 @@ export const user = pgTable("user", {
 	uniqueIndex("user_email_key").using("btree", table.email.asc().nullsLast().op("text_ops")),
 	uniqueIndex("user_username_key").using("btree", table.username.asc().nullsLast().op("text_ops")),
 ]);
-
-export const academies = pgTable("academies", {
-	id: text().primaryKey().notNull(),
-	name: text().notNull(),
-	createdAt: timestamp({ mode: 'string' }).defaultNow(),
-});
 
 export const classMembers = pgTable("class_members", {
 	userId: text().notNull(),
@@ -44,4 +45,19 @@ export const tasks = pgTable("tasks", {
 	title: text().notNull(),
 	description: text().notNull(),
 	createdAt: timestamp({ mode: 'string' }).defaultNow(),
+});
+
+export const academyRequests = pgTable("academy_requests", {
+	academyId: text().notNull(),
+	userId: text().notNull(),
+	requestedRole: text().default('student').notNull(),
+	status: text().notNull(),
+	message: text().notNull(),
+	updatedAt: timestamp({ mode: 'string' }).defaultNow(),
+});
+
+export const inviteCodes = pgTable("invite_codes", {
+	code: text().notNull(),
+	academyId: text().notNull(),
+	expireAt: timestamp({ mode: 'string' }),
 });

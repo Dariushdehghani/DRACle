@@ -20,6 +20,7 @@ import { AnimatePresence, backIn, motion } from "framer-motion";
 import api from "../lib/api";
 import TextButton from "../components/TextButton";
 import { email, z } from "zod"
+import { useNavigate } from "react-router-dom";
 
 export default function Signup() {
   const [formData, setFormData] = useState({
@@ -189,10 +190,7 @@ function SignupForm({ data, setData, onNext }) {
   }
 
   return (
-    <form
-      className={styles.login_box_container}
-      onSubmit={handleSubmit}
-    >
+    <form className={styles.login_box_container} onSubmit={handleSubmit}>
       <h1>{t("signup")}</h1>
 
       <Input1
@@ -239,10 +237,9 @@ function SignupForm({ data, setData, onNext }) {
         }
       />
 
-      <SButton
-        icon={ArrowRight}
-        type="submit"
-      />
+      <a href="/signup">{t("have_account")}</a>
+
+      <SButton icon={ArrowRight} type="submit" />
 
       <LangSelect />
     </form>
@@ -360,26 +357,37 @@ function AcademyCreation({
   setStep,
 }) {
   const { t } = useTranslation()
+
+  const navigate = useNavigate()
+
+  const [errors, setError] = useState({
+    academy_name: false
+  })
   const handleSubmit = (e) => {
     e.preventDefault()
 
     const formData = new FormData(e.currentTarget)
 
-    const academy =  formData.get("academy_name")
+    const academy = formData.get("academy_name")
 
     setData((prev) => ({
       ...prev,
       academy,
     }));
 
-    const res = api.post("/auth/register", 
+    api.post("/auth/register", 
       {
         ...data,
         academy,
       }
-    )
-
-    console.log(res)
+    ).then(res => {
+      const msg = res.data.message
+      if (msg === "academy_exists") {
+        setError({ academy_name: true })
+      } else if (msg === "successful_register") {
+        navigate("/dash")
+      }
+    })
 
   }
 
@@ -389,6 +397,7 @@ function AcademyCreation({
       <Input1
       name="academy_name"
       icon={NotebookText}
+      error={errors.academy_name}
       type="text"
       placeholder={t("academy name")}
       />
@@ -415,6 +424,12 @@ function AcademyJoin({
   setStep,
 }) {
   const { t } = useTranslation()
+
+  const navigate = useNavigate()
+
+  const [errors, setErrors] = useState({
+    invite_code: false
+  })
   const handleSubmit = (e) => {
     e.preventDefault()
 
@@ -427,14 +442,22 @@ function AcademyJoin({
       academy,
     }));
 
-    const res = api.post("/auth/register", 
+    api.post("/auth/register", 
       {
         ...data,
         academy,
       }
-    )
-
-    console.log(res)
+    ).then(res => {
+      const msg = res.data.message
+      if (msg === "successful_register") {
+        alert("request added successfully, now wait for the request to be accepted")
+        navigate("/dash")
+      } else if (msg === "invite_invalid") {
+        setErrors({
+          invite_code: true
+        })
+      }
+    })
 
   }
 
@@ -444,6 +467,7 @@ function AcademyJoin({
       <Input1
       name="academy_code"
       icon={NotebookText}
+      error={errors.invite_code}
       type="text"
       placeholder={t("academy invite code")}
       />

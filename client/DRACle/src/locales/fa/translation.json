@@ -18,7 +18,11 @@
   "join academy": "عضو یک آکادمی شوید",
   "back": "برو عقب",
   "select_role": "انتخاب نقش",
-  "student": "دانشجو",
+  "student": "دانش آموز",
   "teacher": "معلم",
-  "assistant": "دستیار"
+  "assistant": "دستیار",
+  "owner": "صاحب",
+  "signin": "ورود",
+  "as": "بعنوان",
+  "in": "در"
 }

@@ -36,21 +36,30 @@ export const membership = pgTable("membership", {
 export const class_members = pgTable("class_members", {
 	userId: text().notNull(),
 	classId: text().notNull(),
+	role: text().notNull(),
 	joinedAt: timestamp().defaultNow()
 })
 
 export const classes = pgTable("classes", {
 	id: text().primaryKey().notNull(),
 	name: text().notNull(),
+	academyId: text().notNull(),
+	teacherId: text().notNull(),
 	createdAt: timestamp().defaultNow()
-})
+},
+(table) => [
+	uniqueIndex("academy_class_name_unique").on(table.academyId, table.name)
+])
 
 export const tasks = pgTable("tasks", {
 	id: text().primaryKey().notNull(),
+	createdBy: text().notNull(),
 	classId: text().notNull(),
+	doneByIds: text(),
 	title: text().notNull(),
 	description: text().notNull(),
-	createdAt: timestamp().defaultNow()
+	createdAt: timestamp().defaultNow(),
+	expireAt: timestamp()
 })
 
 export const academy_requests = pgTable("academy_requests", {

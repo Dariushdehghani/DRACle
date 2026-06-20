@@ -21,5 +21,7 @@
   "select_role": "Select your role",
   "student": "Student",
   "teacher": "Teacher",
-  "assistant": "Assistant"
+  "assistant": "Assistant",
+  "owner": "Owner",
+  "signin": "Signin"
 }

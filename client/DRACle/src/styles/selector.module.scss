@@ -1,0 +1,32 @@
+.input_box {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  transition: .3s;
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.dropdown {
+  background-color: var(--bg-primary);
+  position: absolute;
+  list-style: none;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  transform-origin: top;
+
+  & li {
+    padding: 5px;
+  }
+  
+  & li:hover {
+    background-color: var(--bg-secondary);
+  }
+}

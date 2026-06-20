@@ -1,0 +1,13 @@
+.button {
+  width: 55px;
+  height: 55px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  background-color: var(--accent);
+  border: none;
+  border-radius: 50%;
+}

@@ -6,7 +6,7 @@ export default function SButton({
     ...props
 }) {
     return (
-      <motion.button whileHover={{ scale: 0.95 }} whileTap={{ scale: 1.05 }} {...props} className={styles.button}>
+      <motion.button whileHover={{ scale: 0.98 }} whileTap={{ scale: 1.05 }} {...props} className={styles.button}>
         {Icon && <Icon size={22} className={styles.icon} />}
       </motion.button>
     );

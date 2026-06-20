@@ -1,0 +1,16 @@
+.button{
+    background-color: var(--bg-secondary);
+    border: none;
+    border-radius: 100px;
+    display: flex;
+    flex-direction: row;
+    width: 85%;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    transition: .2s;
+
+    &:hover {
+        opacity: .8;
+    }
+}

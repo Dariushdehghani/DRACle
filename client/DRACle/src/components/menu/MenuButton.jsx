@@ -1,4 +1,4 @@
-import styles from "../styles/menuButton.module.scss"
+import styles from "../../styles/menuButton.module.scss"
 
 export default function MenuButton({
     text: Text,

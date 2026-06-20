@@ -1,12 +1,31 @@
 :root {
-    --bg-primary: #ededed;
-    --bg-secondary: #e3e3e3;
-    
-    --accent: #8412ff;
-    --gradient-accent: linear-gradient(125deg, var(--accent) 60%, #6703d1);
-    --gradient-accent-secondary: linear-gradient( 180deg, var(--accent) 30%, #6703d1);
+  --bg-primary: #fbfbfb;
+  --bg-secondary: #e3e3e3;
 
-    --text-primary: #111;
-    --border-radius: 24px;
-    --border-color: rgb(215, 215, 215);
+  --accent: #8412ff;
+  --light-accent: #e9e2f9;
+  --gradient-accent: linear-gradient(125deg, var(--accent) 60%, #5f00c4);
+  --gradient-accent-secondary: linear-gradient(
+    180deg,
+    var(--accent) 30%,
+    #6703d1
+  );
+
+  --text-primary: #111;
+  --border-radius: 24px;
+  --border-color: rgb(215, 215, 215);
+
+  //colors
+  --red: rgb(255, 70, 70);
+  --green: rgb(0, 154, 0);
+  --pink: rgb(226, 0, 200);
+  --blue: rgb(0, 0, 198);
+  --orange: rgb(255, 106, 0);
+  --coffee: rgb(161, 116, 61);
+  --dracle: #6703d1;
+  --drama: #ff2222;
+  --purple: rgb(109, 1, 133);
+  --flower: rgb(242, 0, 121);
+  --rose: rgb(216, 9, 9);
+  --gray: rgb(80, 93, 110);
 }

@@ -1,26 +1,53 @@
-import styles from "../styles/menu.module.scss"
-import MenuButton from "./MenuButton";
-import { Home, School2, Paperclip, AlignEndHorizontal, Settings } from "lucide-react";
+import styles from "../styles/menu.module.scss";
+import MenuButton from "./menu/MenuButton";
+import {
+  Home,
+  School2,
+  Paperclip,
+  Settings,
+  ChevronRight,
+  ChevronLeft,
+} from "lucide-react";
 import { t } from "i18next";
 import { useNavigate } from "react-router-dom";
+import MenuBottom from "./menu/MenuBottom";
+import { motion } from "framer-motion";
+import TextButton from "./TextButton";
+import { useAuth } from "../context/AuthContext";
+import { MessageSquare } from "lucide-react";
 
-export default function Menu({
-    active: Active,
-    user,
-    ...props
-}) {
+export default function Menu({ active: Active, ...props }) {
   const navigate = useNavigate();
 
+  const { user, role, setRole, academy, setAcademy } = useAuth();
+
   function checkActive(page) {
-    return page === Active
+    return page === Active;
   }
+
+  const changeUser = () => {
+    setRole(null);
+    setAcademy(null);
+    navigate("/select-role");
+  };
 
   return (
     <div className={styles.menu}>
       <div className={styles.top}>
         <div className={styles.menuHeader}>
-          <h1>DRACLE</h1>
-          <p>student panel</p>
+          <div style={{ display: "flex", alignItems: "baseLine", gap: "2px" }}>
+            <h1>DRACLE</h1>
+            <p>{`> ${academy}`}</p>
+          </div>
+          <TextButton
+            content={
+              <>
+                <ChevronLeft />
+                <p>{role} panel</p>
+              </>
+            }
+            onClick={() => changeUser()}
+          />
         </div>
         <div className={styles.buttons}>
           <MenuButton
@@ -38,16 +65,9 @@ export default function Menu({
             onClick={() => navigate("/classes")}
           />
           <MenuButton
-            active={checkActive("assign")}
-            color={checkActive("assign") ? "white" : ""}
-            icon={Paperclip}
-            text={t("assignment")}
-            onClick={() => navigate("/assign")}
-          />
-          <MenuButton
             active={checkActive("perf")}
             color={checkActive("pref") ? "white" : ""}
-            icon={AlignEndHorizontal}
+            icon={MessageSquare}
             text={t("messages")}
             onClick={() => navigate("/messages")}
           />
@@ -60,9 +80,7 @@ export default function Menu({
           />
         </div>
       </div>
-      <div className={styles.bottom}>
-        <MenuButton text={user.username} />
-      </div>
+      <MenuBottom user={user} />
     </div>
   );
 }

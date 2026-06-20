@@ -1,6 +1,10 @@
 * {
-    color: var(--text-primary);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: "open sans", "noto naskh", sans-serif;
+
+    &::selection {
+        background: var(--accent);
+        color: aliceblue;
+    }
 }
 
 row {
@@ -10,4 +14,23 @@ row {
 
 html {
     overflow: hidden;
+}
+
+a {
+    color: var(--accent);
+}
+
+@font-face {
+    font-family: "open sans";
+    src: url(../assets/fonts/OpenSans-VariableFont_wdth\,wght.ttf);
+}
+
+@font-face {
+    font-family: "noto naskh";
+    src: url(../assets/fonts/NotoNaskhArabic-VariableFont_wght.ttf);
+}
+
+@font-face {
+    font-family: "gulzar";
+    src: url(../assets/fonts/Gulzar-Regular.ttf);
 }

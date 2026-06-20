@@ -5,6 +5,10 @@ import api from "../lib/api.js"
 export default function AuthProvider({ children }) {
     const [user, setUser] = useState(null)
     const [loading, setLoading] = useState(true)
+    const [academy, setAcademy] = useState(() => sessionStorage.getItem("academy"))
+    const [academyId, setAcademyId] = useState(() => sessionStorage.getItem("academyId"))
+    const [role, setRole] = useState(() => sessionStorage.getItem("role"))
+    const [requests, setRequests] = useState(null)
 
     useEffect(() => {
         api.get("/auth/me")
@@ -24,7 +28,13 @@ export default function AuthProvider({ children }) {
         value={{
             user,
             setUser,
-            loading
+            loading,
+            academy,
+            setAcademy,
+            academyId,
+            setAcademyId,
+            role,
+            setRole
         }}
         >
             {children}

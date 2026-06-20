@@ -1,21 +1,26 @@
 .button {
-    display: flex;
-    gap: 1rem;
-    padding: 8px 1rem 8px 1rem;
-    width: 100%;
-    flex-direction: row;
-    align-items: center;
-    background: none;
-    border: none;
-    border-radius: 10px;
-    color: var(--text-primary);
-    transition: 0.2s;
-    &.active {
-        background: var(--gradient-accent);
-        color: #f1f1f1;
-    }
-    &:hover {
-        scale: 0.95;
-        opacity: 0.9;
-    }
+  display: flex;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  width: 100%;
+  flex-direction: row;
+  align-items: center;
+  background: none;
+  border: none;
+  border-radius: 10px;
+  color: var(--text-primary);
+  transition: 0.2s;
+  font-size: 15px;
+  &:hover {
+    scale: .95;
+  }
+  &.active {
+    background: var(--gradient-accent);
+    background-size: calc(100% + 2rem);
+    color: #f1f1f1;
+  }
+  &.active:hover {
+    background-position: -2rem;
+    scale: 1;
+  }
 }

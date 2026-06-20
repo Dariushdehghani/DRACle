@@ -1,0 +1,28 @@
+.input {
+  border: none;
+  background: none;
+  color: var(--text-primary);
+  outline: none;
+  font-size: 15px;
+  width: 100%;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--border-color);
+  background: var(--bg-secondary);
+  padding: 8px;
+  border-radius: 10px;
+  transition: 0.2s;
+}
+
+.wrapper:focus-within {
+  border-color: var(--accent);
+}
+
+.err {
+  border-color: rgb(255, 90, 90);
+}

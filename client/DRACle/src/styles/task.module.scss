@@ -1,0 +1,64 @@
+.task {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--light-accent);
+    padding: 15px;
+    border-radius: 24px;
+}
+
+.wrapper {
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+
+    & input {
+        display: none;
+    }
+
+    & span {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: var(--bg-primary);
+        border: 2px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    & div p {
+        color: gray;
+    }
+
+    & span:hover {
+        opacity: 0.8;
+        scale: 1.1;
+    }
+
+    & span > svg {
+        opacity: 0;
+        transition: 0.2s;
+    }
+
+    & input:checked ~ span > svg {
+        opacity: 1;
+    }
+
+    & input:checked ~ div > h3 {
+        text-decoration: line-through;
+    }
+}
+
+.done {
+    opacity: .6;
+}
+
+.color {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}

@@ -1,0 +1,10 @@
+.box {
+    background-color: var(--bg-primary);
+    box-sizing: border-box;
+    border-radius: 24px;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}

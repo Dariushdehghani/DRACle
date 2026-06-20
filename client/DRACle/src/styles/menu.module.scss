@@ -1,5 +1,5 @@
 .menu {
-    width: 250px;
+    width: 400px;
     height: 100%;
     background-color: var(--bg-primary);
     display: flex;
@@ -7,6 +7,8 @@
     justify-content: space-between;
     align-items: center;
     border-right: 1px solid var(--border-color);
+    box-sizing: border-box;
+    padding-bottom: 1rem;
 }
 
 .main {
