@@ -8,7 +8,7 @@ import ClassObj from "../components/classPage/ClassObj";
 import FloatingButton from "../components/FloatingButton";
 import { useState } from "react";
 import CreateClassModal from "../components/modals/CreateClass";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import api from "../lib/api";
 import { UserRoundPlus } from "lucide-react";
 import TextButton from "../components/TextButton";
@@ -16,29 +16,35 @@ import RequestsModal from "../components/modals/RequestsModal";
 
 export default function Classes() {
   const [showCreateClass, setShowCreateClass] = useState(false);
-  const [showClassMates, setShowClassmates] = useState(false);
+  const [selectedClass, setSelectedClass] = useState("");
   const [showAddUsers, setShowAddUsers] = useState(false);
-  const { user, role, academy } = useAuth();
+  const { user, role, academy, academyId } = useAuth();
   let classes = [
     {
+      id: 1,
       name: "math class 301",
-      description: "the math class with mr. dehghani",
+      description: "the math class with mr. darayesh",
       online: false,
     },
     {
+      id: 2,
       name: "physics class 301",
-      description: "the physics class with mr. dehghani",
+      description: "the physics class with mr. salehi",
       online: false,
     },
     {
+      id: 3,
       name: "chemistery class 301",
       description: "the chemmy class with mr. dehghani",
       online: false,
     },
   ];
-  const handleOpenMembers = async (classId) => {
-    const members = api.get(`/fetch/classes/academy/${academy}`);
-  };
+  async function handleOpenMembers(classId) {
+    const members = api.get(
+      `/fetch/classes/academy/${academyId}/class/${classId}/members`,
+    );
+    setSelectedClass(classId);
+  }
   return (
     <div className={styles.row}>
       <Menu active="classes" user={user} />
@@ -46,18 +52,23 @@ export default function Classes() {
         <div className={styles.header}>
           <SearchField />
           <div className={styles.userDetails}>
-            <TextButton onClick={() => setShowAddUsers(true)} content={<UserRoundPlus />} />
+            <TextButton
+              onClick={() => setShowAddUsers(true)}
+              content={<UserRoundPlus />}
+            />
             <TextButton content={<Info size={22} />} />
           </div>
         </div>
         <div className={styles.classList}>
           {classes?.map((Class) => (
             <ClassObj
+              expanded={Class.id === selectedClass}
+              uid={Class.id}
               key={classes.indexOf(Class)}
               name={Class.name}
               description={Class.description}
               online={Class.online}
-              showMembers={handleOpenMembers()}
+              showMembers={handleOpenMembers}
             />
           ))}
           {(role === "owner" || role === "admin") && (
@@ -74,7 +85,6 @@ export default function Classes() {
               onClose={() => setShowCreateClass(false)}
             />
           )}
-          {/*;*/}
           {showAddUsers && (
             <RequestsModal
               open={showAddUsers}

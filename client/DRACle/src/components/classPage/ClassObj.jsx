@@ -7,51 +7,47 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 
 export default function ClassObj({
+  expanded,
+  uid,
   name,
   description,
   online,
   attendLink,
   chatLink,
+  showMembers,
+  ...props
 }) {
-  const [showMembers, setShowMembers] = useState(false);
   const navigate = useNavigate();
   return (
-    <div className={styles.wrapper}>
-      <AnimatePresence>
-        {showMembers && (
-          <motion.div
-            className={styles.overlay}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={setShowMembers(false)}
-          />
-        )}
-      </AnimatePresence>
-
-      <div className={styles.head} onClick={() => setShowMembers(true)}>
+    <motion.div className={styles.wrapper} {...props}>
+      <div className={styles.head} onClick={() => showMembers(uid)}>
         <h2>{name}</h2>
         <p>{description}</p>
       </div>
-      <div className={styles.foot}>
-        <TextButton
-          content={
-            <>
-              <Link />
-              attend
-            </>
-          }
-        />
-        <TextButton
-          onClick={() => navigate("#")}
-          content={
-            <>
-              <MessageCircle />
-              open chat
-            </>
-          }
-        />
-      </div>
-    </div>
+      <AnimatePresence>
+        {!expanded && (
+          <motion.div className={styles.foot}>
+            <TextButton
+              content={
+                <>
+                  <Link />
+                  attend
+                </>
+              }
+            />
+            <TextButton
+              onClick={() => navigate("#")}
+              content={
+                <>
+                  <MessageCircle />
+                  open chat
+                </>
+              }
+            />
+          </motion.div>
+        )}
+        {}
+      </AnimatePresence>
+    </motion.div>
   );
 }

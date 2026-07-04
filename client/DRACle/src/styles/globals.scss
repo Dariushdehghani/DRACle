@@ -3,8 +3,12 @@
 
     &::selection {
         background: var(--accent);
-        color: aliceblue;
+        color: var(--text-primary);
     }
+}
+
+button {
+  color: var(--text-primary);
 }
 
 row {

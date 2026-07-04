@@ -21,6 +21,7 @@
   border: 1px solid var(--border-color);
   border-radius: 10px;
   transform-origin: top;
+  overflow-y: hidden;
 
   & li {
     padding: 5px;

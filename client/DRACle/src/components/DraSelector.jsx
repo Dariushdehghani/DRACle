@@ -29,9 +29,9 @@ export default function DraSelector({
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ scaleY: 0 }}
-            animate={{ scaleY: 1 }}
-            exit={{ scaleY: 0 }}
+            initial={{ height: 0 }}
+            animate={{ height: "fit-content" }}
+            exit={{ height: 0 }}
             className={`${styles.dropdown} ${isOpen ? styles.open : ""}`}
           >
             {items?.map((i) => (

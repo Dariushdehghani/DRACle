@@ -81,3 +81,119 @@ export const fetchRequests = async (req) => {
     };
   }
 };
+
+export const acceptRequest = async (req, reply) => {
+  const academy = req.params.academy
+  const { userId } = req.body
+  try {
+    const request = (
+      await db
+        .select()
+        .from(academy_requests)
+        .where(
+          and(
+            eq(academy_requests.userId, userId),
+            eq(academy_requests.academyId, academy)
+          )
+        )
+        .limit(1)
+    )[0];
+
+    if (!request) {
+      return reply
+        .status(200)
+        .send({
+          message: "req_not_found"
+        })
+    }
+
+    const user = (
+      await db
+        .select()
+        .from(users)
+        .where(eq(users.id, userId))
+        .limit(1)
+    )[0];
+
+    if (!user) {
+      return reply
+        .status(200)
+        .send({
+          message: "user_not_found"
+        })
+    }
+
+    const exists = (
+      await db
+        .select()
+        .from(membership)
+        .where(
+          and(
+            eq(membership.userId, userId),
+            eq(membership.academyId, academy)
+          )
+        )
+        .limit(1)
+    )[0];
+
+    if (exists) {
+      return reply
+        .status(200)
+        .send({
+          message: "exists"
+        })
+    }
+
+    await db.transaction(async (tx) => {
+      await tx.insert(membership).values({
+        academyId: academy,
+        userId,
+        role: request.requestedRole
+      })
+
+      await tx.delete(academy_requests).where(
+        and(
+          eq(academy_requests.userId, userId),
+          eq(academy_requests.academyId, academy)
+        )
+      )
+    })
+
+    return reply
+      .status(200)
+      .send({
+        message: "done"
+      })
+  } catch (err) {
+    reply
+      .status(400)
+      .send({
+        message: "server_err" + err
+      })
+  }
+}
+
+export const declineRequest = async (req, reply) => {
+  const academy = req.paras.academy
+  const { userId } = req.body
+  try {
+    await db
+      .update(academy_requests)
+      .set({ status: "not_approved" })
+      .where(and(
+        eq(academy_requests.userId, userId),
+        eq(academy_requests.academyId, academy)
+      ))
+    return reply
+      .status(200)
+      .send({
+        message: "done"
+      })
+  } catch {
+    return reply
+      .status(400)
+      .send({
+        message: "server_err"
+      })
+  }
+}
