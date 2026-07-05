@@ -24,5 +24,18 @@
   "owner": "صاحب",
   "signin": "ورود",
   "as": "بعنوان",
-  "in": "در"
+  "in": "در",
+  "schedule": "برنامه زمانی",
+  "open_calendar": "باز کردن تقویم",
+  "persian_calendar": "تقویم شمسی",
+  "view_weekly_schedule": "مشاهده برنامه هفتگی",
+  "weekdays": {
+    "sat": "ش",
+    "sun": "ی",
+    "mon": "د",
+    "tue": "س",
+    "wed": "چ",
+    "thu": "پ",
+    "fri": "ج"
+  }
 }
