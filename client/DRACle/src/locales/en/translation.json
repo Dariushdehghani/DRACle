@@ -23,5 +23,18 @@
   "teacher": "Teacher",
   "assistant": "Assistant",
   "owner": "Owner",
-  "signin": "Signin"
+  "signin": "Signin",
+  "schedule": "Schedule",
+  "open_calendar": "Open Calendar",
+  "persian_calendar": "Persian Calendar",
+  "view_weekly_schedule": "View Weekly Schedule",
+  "weekdays": {
+    "sat": "Sat",
+    "sun": "Sun",
+    "mon": "Mon",
+    "tue": "Tue",
+    "wed": "Wed",
+    "thu": "Thu",
+    "fri": "Fri"
+  }
 }
