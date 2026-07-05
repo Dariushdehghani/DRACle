@@ -36,5 +36,24 @@
     "wed": "Wed",
     "thu": "Thu",
     "fri": "Fri"
-  }
+  },
+  "months": {
+    "month1": "Farvardin",
+    "month2": "Ordibehesht",
+    "month3": "Khordad",
+    "month4": "Tir",
+    "month5": "Mordad",
+    "month6": "Shahrivar",
+    "month7": "Mehr",
+    "month8": "Aban",
+    "month9": "Azar",
+    "month10": "Dey",
+    "month11": "Bahman",
+    "month12": "Esfand"
+  },
+  "no_events": "No events",
+  "no_events_for_day": "No events for this day",
+  "previous_month": "Previous month",
+  "next_month": "Next month",
+  "back_to_calendar": "Back to Calendar"
 }
