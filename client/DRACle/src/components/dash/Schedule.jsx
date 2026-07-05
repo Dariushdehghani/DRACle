@@ -3,6 +3,8 @@ import styles from "../../styles/Schedule.module.scss";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import ScheduleEvent from "../ScheduleEvent";
+import { format, formatDistanceToNow } from "date-fns-jalali";
+import { faIR } from "date-fns-jalali/locale";
 
 export default function Schedule() {
   const [[state, direction], setState] = useState([1, 0]);
@@ -84,12 +86,47 @@ function ScheduleTable({ setState }) {
 }
 
 function Calendar({ setState }) {
+  const today = new Date();
+  const persianDate = format(today, "dddd، d MMMM yyyy", { locale: faIR });
+  const persianDateShort = format(today, "yyyy/MM/dd", { locale: faIR });
+  const daysInMonth = Array.from({ length: 30 }, (_, i) => {
+    const date = new Date(today.getFullYear(), today.getMonth(), i + 1);
+    return {
+      persian: format(date, "d", { locale: faIR }),
+      full: date,
+      isToday: i + 1 === today.getDate(),
+      dayName: format(date, "EEE", { locale: faIR }),
+    };
+  });
+
   return (
-    <div className={styles.rowHead}>
-      <h1>Calendar</h1>
-      <a href="#" onClick={() => setState(() => [1, -1])}>
-        open schedule table
-      </a>
+    <div className={styles.calendarContainer}>
+      <div className={styles.rowHead}>
+        <h1>تقویم شمسی</h1>
+        <a href="#" onClick={() => setState(() => [1, -1])}>
+          مشاهده برنامه هفتگی
+        </a>
+      </div>
+      <div className={styles.todayDisplay}>
+        <h2>{persianDate}</h2>
+        <p>{formatDistanceToNow(today, { locale: faIR, addSuffix: true })}</p>
+      </div>
+      <div className={styles.calendarGrid}>
+        {["ش", "ی", "د", "س", "چ", "پ", "ج"].map((day) => (
+          <div key={day} className={styles.weekdayHeader}>
+            {day}
+          </div>
+        ))}
+        {daysInMonth.map((day, index) => (
+          <div
+            key={index}
+            className={`${styles.calendarDay} ${day.isToday ? styles.isToday : ""}`}
+          >
+            <span className={styles.dayNumber}>{day.persian}</span>
+            <span className={styles.dayName}>{day.dayName}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
