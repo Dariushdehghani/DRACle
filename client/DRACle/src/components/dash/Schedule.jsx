@@ -3,7 +3,7 @@ import styles from "../../styles/Schedule.module.scss";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import ScheduleEvent from "../ScheduleEvent";
-import { format, formatDistanceToNow, getDay, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, isSameDay, subMonths, addMonths } from "date-fns-jalali";
+import { format, formatDistanceToNow, getDay, startOfMonth } from "date-fns-jalali";
 import { faIR } from "date-fns-jalali/locale";
 import { useTranslation } from "react-i18next";
 
@@ -89,41 +89,47 @@ function ScheduleTable({ setState }) {
 
 function Calendar({ setState }) {
   const { t } = useTranslation();
-  const [currentDate, setCurrentDate] = useState(new Date());
-  
-  const monthStart = startOfMonth(currentDate);
-  const monthEnd = endOfMonth(currentDate);
-  
-  // Get the first day of the current Persian month
-  // In Jalali calendar: Saturday=0, Sunday=1, ..., Friday=6
-  const firstDayOfMonth = startOfMonth(currentDate);
-  const firstDayWeekday = getDay(firstDayOfMonth);
-  
-  // Calculate the start of the grid (Saturday before or on the 1st)
-  const gridStartDate = startOfWeek(monthStart, { weekStartsOn: 6 });
-  const gridEndDate = endOfWeek(monthEnd, { weekStartsOn: 6 });
-
-  const calendarDays = eachDayOfInterval({
-    start: gridStartDate,
-    end: gridEndDate
-  });
-
   const today = new Date();
   const persianDate = format(today, "dddd، d MMMM yyyy", { locale: faIR });
-
-  const weekdays = [
-    t('schedule.weekdays.sat'),
-    t('schedule.weekdays.sun'),
-    t('schedule.weekdays.mon'),
-    t('schedule.weekdays.tue'),
-    t('schedule.weekdays.wed'),
-    t('schedule.weekdays.thu'),
-    t('schedule.weekdays.fri')
-  ];
-
-  const handlePrevMonth = () => setCurrentDate(subMonths(currentDate, 1));
-  const handleNextMonth = () => setCurrentDate(addMonths(currentDate, 1));
-  const handleToday = () => setCurrentDate(new Date());
+  
+  // Get the first day of the current Persian month
+  const firstDayOfMonth = startOfMonth(today);
+  // Get the weekday of the first day (0 = Saturday for Persian calendar in date-fns-jalali)
+  const firstDayWeekday = getDay(firstDayOfMonth);
+  
+  // Create empty slots for days before the first day of the month
+  const emptySlots = Array.from({ length: firstDayWeekday }, (_, i) => ({
+    empty: true,
+    key: `empty-${i}`,
+  }));
+  
+  // Get days in the current Persian month (30 or 31 days)
+  const year = parseInt(format(today, "yyyy", { locale: faIR }));
+  const month = parseInt(format(today, "MM", { locale: faIR }));
+  
+  // Determine days in month (first 6 months have 31 days, rest have 30, last has 29/30)
+  let daysInMonthCount;
+  if (month <= 6) {
+    daysInMonthCount = 31;
+  } else if (month <= 11) {
+    daysInMonthCount = 30;
+  } else {
+    // Check if it's a leap year
+    daysInMonthCount = ((year % 4 === 0) && (year % 100 !== 0 || year % 400 === 0)) ? 30 : 29;
+  }
+  
+  const daysInMonth = Array.from({ length: daysInMonthCount }, (_, i) => {
+    const date = new Date(year, month - 1, i + 1);
+    return {
+      persian: format(date, "d", { locale: faIR }),
+      full: date,
+      isToday: i + 1 === parseInt(format(today, "d", { locale: faIR })),
+      dayName: format(date, "EEE", { locale: faIR }),
+      key: `day-${i}`,
+    };
+  });
+  
+  const allDays = [...emptySlots, ...daysInMonth];
 
   return (
     <div className={styles.calendarContainer}>
@@ -137,32 +143,25 @@ function Calendar({ setState }) {
         <h2>{persianDate}</h2>
         <p>{formatDistanceToNow(today, { locale: faIR, addSuffix: true })}</p>
       </div>
-      <div className={styles.navControls}>
-        <button onClick={handlePrevMonth} className={styles.navBtn}>&#8249;</button>
-        <span className={styles.monthLabel}>
-          {format(currentDate, 'LLLL yyyy', { locale: faIR })}
-        </span>
-        <button onClick={handleNextMonth} className={styles.navBtn}>&#8250;</button>
-      </div>
       <div className={styles.calendarGrid}>
-        {weekdays.map((day, idx) => (
-          <div key={idx} className={styles.weekdayHeader}>{day}</div>
+        {["sat", "sun", "mon", "tue", "wed", "thu", "fri"].map((day) => (
+          <div key={day} className={styles.weekdayHeader}>
+            {t(`weekdays.${day}`)}
+          </div>
         ))}
-        
-        {calendarDays.map((day, idx) => {
-          const isToday = isSameDay(day, new Date());
-          const isCurrentMonth = day.getMonth() === monthStart.getMonth() && day.getFullYear() === monthStart.getFullYear();
-          
-          return (
-            <div 
-              key={idx} 
-              className={`${styles.calendarDay} ${isToday ? styles.isToday : ''} ${!isCurrentMonth ? styles.otherMonth : ''}`}
+        {allDays.map((day) => 
+          day.empty ? (
+            <div key={day.key} className={styles.calendarDayEmpty} />
+          ) : (
+            <div
+              key={day.key}
+              className={`${styles.calendarDay} ${day.isToday ? styles.isToday : ""}`}
             >
-              <span className={styles.dayNumber}>{format(day, 'd')}</span>
-              {!isToday && <span className={styles.dayName}>{format(day, 'EEEEEE', { locale: faIR })}</span>}
+              <span className={styles.dayNumber}>{day.persian}</span>
+              <span className={styles.dayName}>{day.dayName}</span>
             </div>
-          );
-        })}
+          )
+        )}
       </div>
     </div>
   );
